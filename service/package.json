@@ -1,0 +1,26 @@
+{
+  "name": "service",
+  "version": "1.0.1",
+  "description": "rest service for billing",
+  "main": "index.js",
+  "scripts": {
+    "test": "alof"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alif666/billing.git"
+  },
+  "keywords": [
+    "billing"
+  ],
+  "author": "alif",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/alif666/billing/issues"
+  },
+  "homepage": "https://github.com/alif666/billing#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql": "^2.18.1"
+  }
+}
