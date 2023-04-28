@@ -8,6 +8,25 @@ const Billing = require('../models/Billing');
 // Use body-parser middleware to parse JSON body
 router.use(bodyParser.json());
 
+
+//get all billing results
+router.get('/', (req,res)=>{
+    console.log('BillingRouter get called '+req);
+    const billingService = new BillingService();
+    // Define a callback function to handle the result
+    const handleBillingResult = (billingObjects) => {
+        // Write your code here to handle the result
+        console.log('Received billing result', billingObjects);
+        // Send the result back to the client or perform any other action
+        res.send(billingObjects);
+    };
+
+    // Call the getBilling method with the callback function
+    billingService.getBilling(handleBillingResult);
+});
+
+
+
 //insert a billing
 router.post('/', (req,res)=>{
     console.log('BillingRouter post called '+req.body);
@@ -26,9 +45,9 @@ router.post('/', (req,res)=>{
 });
 
 //update a billing
-router.patch('/', (req,res)=>{
-    console.log('BillingRouter update called '+req.body);
+router.put('/', (req,res)=>{
     const billingObject = Billing.mapFromRow(req.body);
+    console.log('BillingRouter - billingObject - '+billingObject.billing_amount);
     // Access the JSON body data
     /*const billingData = JSON.stringify(req.body);
     console.log("BillingRouter post jsonBody "+billingData);*/
@@ -41,12 +60,14 @@ router.patch('/', (req,res)=>{
     res.send("Successfull");
 });
 
-
-//get all billing results
-router.get('/', (req,res)=>{
-    console.log('BillingRouter get called '+req);
+//get Billing By Id
+router.post('/id', (req,res)=>{
+    
     const billingService = new BillingService();
     // Define a callback function to handle the result
+    const billingObject = Billing.mapFromRow(req.body);
+    console.log("BillingRouter - req.body is and Billing id is  "+req.body+" #### "+billingObject.billing_id);
+
     const handleBillingResult = (billingObjects) => {
         // Write your code here to handle the result
         console.log('Received billing result', billingObjects);
@@ -55,8 +76,10 @@ router.get('/', (req,res)=>{
     };
 
     // Call the getBilling method with the callback function
-    billingService.getBilling(handleBillingResult);
+    billingService.getBillingById(billingObject, handleBillingResult);
+
 });
+
 
 
 //delete a billing

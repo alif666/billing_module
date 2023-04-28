@@ -2,20 +2,20 @@ const express = require('express');
 const fs = require('fs');
 const mysql = require('mysql');
 const path = require('path');
-const Billing = require('../models/Billing');
+const Product = require('../models/Product');
 
 
 // Require the MySQL connection configuration from db_connect.js
 const connectionConfig = require('../repositories/db');
 
 
-class BillingService {
+class ProductService {
 
   constructor() {
 
   }
-  //Get All Billing Information
-  getBilling(callback) {
+  //Get All Product Information
+  getProduct(callback) {
     // Create a connection to the MySQL server
     const connection = mysql.createConnection(connectionConfig);
 
@@ -24,26 +24,26 @@ class BillingService {
       if (err) throw err;
       console.log('Connected to MySQL server');
     });
-    console.log('BillingService getBilling called ');
+    console.log('ProductService getProduct called ');
 
 
     // query to server
-    connection.query('select * from billing', (err, result) => {
+    connection.query('select * from product', (err, result) => {
       if (err) throw err;
 
       // If there is no result
       if (result.length === 0) {
         // Write your code here for handling no result
-        console.log('No billing records found');
+        console.log('No product records found');
       } else {
         // If there is a result
         // Write your code here for handling the result
         console.log('Query successful', result);
 
-        const billingObjects = Billing.mapFromRows(result);
+        const productObjects = Product.mapFromRows(result);
 
-        // Call the callback function with the mapped Billing objects
-        callback(billingObjects);
+        // Call the callback function with the mapped Product objects
+        callback(productObjects);
       }
 
       // Close the MySQL connection
@@ -56,8 +56,8 @@ class BillingService {
 
 
 
-  // Update a Billing
-  updateBilling(billingObject) {
+  // Update a Product
+  updateProduct(productObject) {
     // Create a connection to the MySQL server
     const connection = mysql.createConnection(connectionConfig);
 
@@ -67,13 +67,13 @@ class BillingService {
       console.log('Connected to MySQL server');
     });
 
-    console.log('BillingService setBilling called with unique id ' + billingObject.billing_id);
+    console.log('ProductService setProduct called with unique id ' + productObject.product_id);
 
     // Update query
-    const updateQuery = 'UPDATE billing SET id = ?, billing_amount = ?, status = ?, remark = ?, updated_at = NOW(), updated_by = ? WHERE billing_id = ?';
+const updateQuery = 'UPDATE product SET id = ?, product_name = ?, status = ?, remark = ?, updated_at = NOW(), updated_by = ? WHERE product_id = ?';
 
-    // Execute the update query with the values from the billingObject
-    connection.query(updateQuery, [billingObject.id, billingObject.billing_amount, 'active', billingObject.remark, billingObject.updated_by, billingObject.billing_id], (err, result) => {
+    // Execute the update query with the values from the productObject
+    connection.query(updateQuery, [productObject.id, productObject.product_amount, 'active', productObject.remark, productObject.updated_by, productObject.product_id], (err, result) => {
       if (err) throw err;
       console.log('Data updated successfully:', result);
 
@@ -85,8 +85,8 @@ class BillingService {
     });
   }
 
-  //Set a Billing 
-  setBilling(billingObject) {
+  //Set a Product 
+  setProduct(productObject) {
     // Create a connection to the MySQL server
     const connection = mysql.createConnection(connectionConfig);
 
@@ -95,12 +95,12 @@ class BillingService {
       if (err) throw err;
       console.log('Connected to MySQL server');
     });
-    console.log('BillingService setBilling called ' + billingObject);
+    console.log('ProductService setProduct called ' + productObject);
     // Insert query
-    const insertQuery = 'INSERT INTO billing (id, billing_amount, status, remark, created_at, created_by) VALUES (?, ?, "active", ?, NOW(), ?);';
+    const insertQuery = 'INSERT INTO product (id, product_name, status, remark, created_at, created_by) VALUES (?, ?, "active", ?, NOW(), ?);';
 
-    // Execute the insert query with the values from the billingObject
-    connection.query(insertQuery, [billingObject.id, billingObject.billing_amount, billingObject.remark, billingObject.created_by], (err, result) => {
+    // Execute the insert query with the values from the productObject
+    connection.query(insertQuery, [productObject.id, productObject.product_amount, productObject.remark, productObject.created_by], (err, result) => {
       if (err) throw err;
       console.log('Data inserted successfully:', result);
     });
@@ -114,11 +114,11 @@ class BillingService {
 
 }
 
-//Get Billing Information By Id
-getBillingById(billingObject, callback) {
+//Get Product Information By Id
+getProductById(productObject, callback) {
 
-  //Calling billing_id in billing object
-  console.log('Billing Object id is ' + billingObject.billing_id);
+  //Calling product_id in product object
+  console.log('Product Object id is ' + productObject.product_id);
 
   // Create a connection to the MySQL server
   const connection = mysql.createConnection(connectionConfig);
@@ -129,20 +129,20 @@ getBillingById(billingObject, callback) {
     console.log('Connected to MySQL server');
   });
 
-  // Get Billing by ID query
-  const GetBillingQuery = 'Select * from billing WHERE billing_id = ?';
+  // Get Product by ID query
+  const GetProductQuery = 'Select * from product WHERE product_id = ?';
 
-  // Execute the delete query with the billing_id from the billingObject as the parameter
-  connection.query(GetBillingQuery, [billingObject.billing_id], (err, result) => {
+  // Execute the delete query with the product_id from the productObject as the parameter
+  connection.query(GetProductQuery, [productObject.product_id], (err, result) => {
     if (err) throw err;
     console.log('Data found by ID successfully:', result);
 
-    billingObject = Billing.mapFromRow(result[0]);
+    productObject = Product.mapFromRow(result[0]);
 
-    console.log("Billing Service - Get By Id - " + billingObject);
+    console.log("Product Service - Get By Id - " + productObject);
 
-    // Call the callback function with the mapped Billing objects
-    callback(billingObject);
+    // Call the callback function with the mapped Product objects
+    callback(productObject);
 
     // Close the MySQL connection
     connection.end((err) => {
@@ -155,8 +155,8 @@ getBillingById(billingObject, callback) {
 
 
 
-// Delete a Billing by billing_id
-deleteBilling(billingObject) {
+// Delete a Product by product_id
+deleteProduct(productObject) {
   // Create a connection to the MySQL server
   const connection = mysql.createConnection(connectionConfig);
 
@@ -166,13 +166,13 @@ deleteBilling(billingObject) {
     console.log('Connected to MySQL server');
   });
 
-  console.log('BillingService deleteBilling called with billingObject: ', billingObject);
+  console.log('ProductService deleteProduct called with productObject: ', productObject);
 
   // Delete query
-  const deleteQuery = 'DELETE FROM billing WHERE billing_id = ?';
+  const deleteQuery = 'DELETE FROM product WHERE product_id = ?';
 
-  // Execute the delete query with the billing_id from the billingObject as the parameter
-  connection.query(deleteQuery, [billingObject.billing_id], (err, result) => {
+  // Execute the delete query with the product_id from the productObject as the parameter
+  connection.query(deleteQuery, [productObject.product_id], (err, result) => {
     if (err) throw err;
     console.log('Data deleted successfully:', result);
 
@@ -187,4 +187,4 @@ deleteBilling(billingObject) {
 }
 
 
-module.exports = BillingService;
+module.exports = ProductService;

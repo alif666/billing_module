@@ -1,0 +1,102 @@
+
+// Start from next client
+const express = require('express');
+const bodyParser = require('body-parser');
+const router = express.Router();
+const ProductService = require('../services/ProductService');
+const Product = require('../models/Product');
+
+//json parse the body
+// Use body-parser middleware to parse JSON body
+router.use(bodyParser.json());
+
+
+//get all product results
+router.get('/', (req,res)=>{
+    console.log('ProductRouter get called '+req);
+    const productService = new ProductService();
+    // Define a callback function to handle the result
+    const handleProductResult = (productObjects) => {
+        // Write your code here to handle the result
+        console.log('Received product result', productObjects);
+        // Send the result back to the client or perform any other action
+        res.send(productObjects);
+    };
+
+    // Call the getProduct method with the callback function
+    productService.getProduct(handleProductResult);
+});
+
+
+
+//insert a product
+router.post('/', (req,res)=>{
+    console.log('ProductRouter post called '+req.body);
+    const productObject = Product.mapFromRow(req.body);
+    // Access the JSON body data
+    /*const productData = JSON.stringify(req.body);
+    console.log("ProductRouter post jsonBody "+productData);*/
+    
+    const productService = new ProductService();
+
+    // Call the getProduct method with the callback function
+    productService.setProduct(productObject);
+
+
+    res.send("Successfull");
+});
+
+//update a product
+router.put('/', (req,res)=>{
+    const productObject = Product.mapFromRow(req.body);
+    // Access the JSON body data
+    /*const productData = JSON.stringify(req.body);
+    console.log("ProductRouter post jsonBody "+productData);*/
+    
+    const productService = new ProductService();
+
+    // Call the getProduct method with the callback function
+    productService.updateProduct(productObject);
+
+    res.send("Successfull");
+});
+
+//get Product By Id
+router.post('/id', (req,res)=>{
+    
+    const productService = new ProductService();
+    // Define a callback function to handle the result
+    const productObject = Product.mapFromRow(req.body);
+   
+    const handleProductResult = (productObjects) => {
+        // Write your code here to handle the result
+        console.log('Received product result', productObjects);
+        // Send the result back to the client or perform any other action
+        res.send(productObjects);
+    };
+
+    // Call the getProduct method with the callback function
+    productService.getProductById(productObject, handleProductResult);
+
+});
+
+
+                        
+//delete a product
+router.delete('/', (req,res)=>{
+    console.log('ProductRouter delete called '+req.body);
+    const productObject = Product.mapFromRow(req.body);
+    // Access the JSON body data
+    /*const productData = JSON.stringify(req.body);
+    console.log("ProductRouter post jsonBody "+productData);*/
+    
+    const productService = new ProductService();
+
+    // Call the delete method with the callback function
+    productService.deleteProduct(productObject);
+
+    res.send("Successfull");
+});
+
+
+module.exports = router;
